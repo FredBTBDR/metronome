@@ -1,5 +1,5 @@
 // Keeps the app usable offline. Bump VERSION whenever a file changes.
-const VERSION = "metronome-v1";
+const VERSION = "metronome-v2";
 const FILES = [
   "./",
   "index.html",

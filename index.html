@@ -30,6 +30,8 @@ body { margin: 0; }
   --down: #ff5a4e;       /* tally red: first beat of the bar */
   --on-accent: #1b1406;
   --accent-text: #ffb22e; /* accent used as text */
+  --ring: #ffb22e;        /* beat rings */
+  --ring-w: 2px;
   --font-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --font-body: "Barlow", -apple-system, "Helvetica Neue", Arial, sans-serif;
   --radius: 14px;
@@ -47,9 +49,13 @@ body[data-mode="light"] {
   --down: #e0382c;
   --on-accent: #1b1406;
   --accent-text: #9a5a00;
+  --ring: #15171c;
+  --ring-w: 3px;
   color-scheme: light;
 }
 html, body { height: 100%; }
+/* Pin the app to the whole screen (iOS home-screen apps can report a shorter height) */
+body { position: fixed; inset: 0; }
 body {
   background: var(--bg);
   color: var(--fg);
@@ -130,10 +136,10 @@ body:not([data-mode="light"]) .ico-moon, body[data-mode="light"] .ico-sun { disp
 .rings { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: -1; pointer-events: none; }
 .ring {
   position: absolute; left: -70px; top: -70px; width: 140px; height: 140px;
-  border-radius: 50%; border: 2px solid var(--accent); opacity: 0;
+  border-radius: 50%; border: var(--ring-w) solid var(--ring); opacity: 0;
   will-change: transform, opacity;
 }
-.ring.down { border: 3px solid var(--down); }
+.ring.down { border: calc(var(--ring-w) + 1px) solid var(--down); }
 #bpmInput {
   position: relative;
   width: 3.2ch; text-align: center; border: 0; background: transparent;
@@ -191,6 +197,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 32px; }
   display: flex; align-items: center; justify-content: center; gap: 14px;
 }
 #playBtn svg { width: 30px; height: 30px; }
+#playBtn .go { text-transform: none; letter-spacing: .04em; font-size: 40px; }
 #playBtn.playing { background: var(--fg); color: var(--bg); }
 
 .nav { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -327,7 +334,7 @@ form.edit h3 { margin: 0; font-size: 13px; letter-spacing: .12em; text-transform
 
   <button id="playBtn" type="button">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>
-    <span>Démarrer</span>
+    <span class="go">Jo!</span>
   </button>
 
   <nav class="nav" id="nav">
@@ -608,7 +615,7 @@ form.edit h3 { margin: 0; font-size: 13px; letter-spacing: .12em; text-transform
     b.classList.toggle("playing", playing);
     b.innerHTML = playing
       ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="12" height="14" rx="1.5"/></svg><span>Stop</span>'
-      : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg><span>Démarrer</span>';
+      : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg><span class="go">Jo!</span>';
   }
   function renderMode() {
     document.body.dataset.mode = prefs.mode === "light" ? "light" : "dark";
