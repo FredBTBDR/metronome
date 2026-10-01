@@ -56,6 +56,10 @@ body[data-mode="light"] {
 html, body { height: 100%; }
 /* Pin the app to the whole screen (iOS home-screen apps can report a shorter height) */
 body { position: fixed; inset: 0; }
+/* Home-screen app: iOS reports a height that stops short of the bottom edge,
+   so the script sets --app-h from the real screen size. */
+body.standalone { bottom: auto; height: var(--app-h, 100%); }
+body.standalone .app { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px); }
 body {
   background: var(--bg);
   color: var(--fg);
@@ -382,6 +386,18 @@ form.edit h3 { margin: 0; font-size: 13px; letter-spacing: .12em; text-transform
 <script>
 (() => {
   const $ = (s) => document.querySelector(s);
+
+  if (navigator.standalone || matchMedia("(display-mode: standalone)").matches) {
+    document.body.classList.add("standalone");
+    const fit = () => {
+      const long = Math.max(screen.width, screen.height), short = Math.min(screen.width, screen.height);
+      const h = innerHeight >= innerWidth ? long : short;
+      document.documentElement.style.setProperty("--app-h", Math.max(h, innerHeight) + "px");
+    };
+    fit();
+    addEventListener("resize", fit);
+    addEventListener("orientationchange", () => setTimeout(fit, 300));
+  }
   const MIN = 30, MAX = 300;
   const LS_SET = "metronome.setlist.v1", LS_PREF = "metronome.prefs.v1";
   const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
